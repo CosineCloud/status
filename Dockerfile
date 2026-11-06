@@ -7,7 +7,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends iputils-ping \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        libffi-dev \
+        libssl-dev \
+        iputils-ping \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 10001 dashboard \
     && mkdir -p /app/data \
