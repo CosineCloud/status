@@ -1,0 +1,20 @@
+# Credentials, databases, sessions, and generated files
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.db
+cookies.txt
+*.log
+data/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.zencoder/
+frontend/node_modules/
+frontend/build/
+*.bak

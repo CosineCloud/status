@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Update Dashboard</title>
+<style>
+:root{--bg:#f3f5f9;--text:#18243a;--muted:#5d6b80;--border:#dce3ed;--card:#fff;--primary:#1761d1;--good:#15803d;--warn:#a45d00;--danger:#dc2626}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+a{color:var(--primary);text-decoration:none}a:hover{text-decoration:underline}button,input,select,textarea{font:inherit}button,a,input,select,textarea{touch-action:manipulation}
+.container{max-width:1200px;margin:0 auto;padding:28px 28px 48px}.page-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:22px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin:0 0 6px}.page-title{font-size:24px;line-height:1.25;letter-spacing:-.6px;margin:0 0 6px}.page-description{margin:0;color:var(--muted)}.header-actions{display:flex;gap:10px;align-items:center;flex-shrink:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px}.stack{display:flex;flex-direction:column;gap:14px}.section-header{display:flex;flex-direction:column;align-items:flex-start;gap:4px;margin-bottom:20px}.section-title{margin:0;font-size:20px;letter-spacing:-.35px}.section-caption,.small{font-size:13px;color:var(--muted)}.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field-label{font-size:13px;font-weight:600;color:#46556b}input,select,textarea{max-width:100%;min-width:0;padding:8px 11px;min-height:39px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:var(--text)}input:not([type=checkbox]):not([type=color]),select,textarea{width:100%}input[type=color]{height:39px;width:64px;padding:4px}input[type=checkbox]{accent-color:var(--primary)}textarea{min-height:90px;resize:vertical}.tag-checkboxes{display:flex;flex-wrap:wrap;gap:10px 22px;padding:11px 14px;background:#f7f9fc;border:1px solid var(--border);border-radius:6px}.tag-checkboxes:empty:after{content:'No access tags available. Create one in Access Keys.';color:var(--muted);font-size:13px}.tag-checkboxes label{display:flex!important;align-items:center;gap:7px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;min-height:39px;border:1px solid transparent;border-radius:6px;background:var(--primary);color:white;font-weight:600;cursor:pointer;text-decoration:none;white-space:normal;line-height:1.4}.btn:hover{filter:brightness(.94);text-decoration:none}.btn.secondary,.btn.ghost{background:#fff;color:#334155;border-color:#cbd5e1}.btn.danger{background:var(--danger)}:focus-visible{outline:3px solid #83b6ff;outline-offset:3px}.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.row>.field{flex:1;min-width:160px}.item{padding:15px 16px;border:1px solid var(--border);border-radius:7px;margin-bottom:12px;background:#fff;overflow-wrap:anywhere}.item.row>div:first-child{min-width:180px}.item .btn{padding:7px 11px;font-size:12px}.badge{font-size:12px;font-weight:600;color:#475569;background:#edf2f8;padding:5px 9px;border-radius:4px}.divider{height:1px;background:var(--border);margin:22px 0}.list-title{font-size:15px;margin:0 0 12px;font-weight:650}.center{display:flex;justify-content:center;margin-top:60px}.center .card{width:100%;max-width:480px}.center .form{display:flex;flex-direction:column;align-items:stretch}.center .form>div:empty{display:none}.indicator-dot{width:10px;height:10px;border-radius:50%}
+.tab-shell{position:sticky;top:12px;z-index:20;margin-bottom:20px;padding:5px;background:#fff;border:1px solid var(--border);border-radius:9px;box-shadow:0 3px 10px #18243a08}.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}.tab{flex:1 0 auto;border:0;border-radius:5px;background:transparent;color:#546278;font-size:13px;font-weight:600;white-space:nowrap;padding:11px 14px;line-height:1.35;cursor:pointer}.tab:hover{color:var(--primary);background:#edf3fd}.tab[aria-selected=true]{color:#fff;background:var(--primary);box-shadow:0 1px 3px #1761d130}.tab-panel{display:none}.tab-panel.is-active{display:block}[hidden]{display:none!important}.panel-intro{margin-bottom:22px}.panel-intro p{margin:0}.records:empty:after{content:attr(data-empty);display:block;padding:24px;text-align:center;border:1px dashed var(--border);border-radius:7px;color:var(--muted);font-size:13px}#intervalTableWrap{overflow-x:auto}table{min-width:320px}
+.tab-panel>form{max-width:960px}.form-title{margin:0 0 2px;font-size:14px;font-weight:650;color:#26364d}.tab-panel>.section-header{padding-bottom:16px;border-bottom:1px solid #e9edf3}.chart-options{max-width:380px}.chart-options>.field{max-width:230px}.tag-label{margin-bottom:-7px}.tab-panel .records{max-width:100%}.tab-panel .form-title+.row{align-items:end}
+@media(min-width:900px){ #addSSHServer{grid-template-columns:repeat(3,minmax(0,1fr))}#addSSHServer .form-title,#addDashboardTag .form-title,#setIntervalForm .form-title{grid-column:1/-1}#addMonitor>.row:first-of-type{display:grid;grid-template-columns:180px minmax(240px,1.5fr) minmax(200px,1fr);align-items:end}#addMonitor>.row:first-of-type>.field{min-width:0}#addDashboardTag{grid-template-columns:minmax(200px,1fr) minmax(180px,1fr) auto}#setIntervalForm{grid-template-columns:minmax(240px,1.4fr) minmax(180px,1fr) auto}#addIncident>.row{max-width:280px}}
+@media(max-width:680px){.container{padding:20px 14px 36px}.page-head{align-items:flex-start;flex-direction:column;gap:14px;margin-bottom:18px}.page-title{font-size:24px}.page-description{font-size:13px}.eyebrow{font-size:10px}.header-actions{width:100%}.header-actions .btn{font-size:12px;min-height:36px;padding:8px 12px}.card{padding:20px 16px}.tab-shell{top:6px;margin-bottom:14px}.tab{flex:0 0 auto;padding:10px 13px}.tabs{scrollbar-width:thin}.section-title{font-size:20px}.section-header{margin-bottom:18px}.form{grid-template-columns:1fr}.row>.field{flex-basis:100%}.item.row>div{flex-basis:100%}.center{margin-top:24px}.tab-panel>.row .btn{flex:1 1 140px}.section-caption{line-height:1.5}input,select,textarea{font-size:16px}.chart-options{max-width:none}.chart-options>.field{max-width:none}.chart-options>label.row{flex-basis:auto}.divider{margin:20px 0}}
+.feature-options{display:flex;flex-wrap:wrap;gap:12px 20px;margin:14px 0}.feature-options label{display:flex;align-items:center;gap:7px}.key-features{flex-basis:100%;padding-top:12px;border-top:1px solid var(--border)}.access-dialog{width:min(520px,calc(100% - 32px));max-height:85vh;overflow:auto;border:1px solid var(--border);border-radius:12px;padding:24px;color:var(--text)}.access-dialog::backdrop{background:#0f172a80}.access-dialog h2{font-size:20px;margin-top:0}.access-dialog .tag-checkboxes{display:flex;flex-direction:column;margin:18px 0}.save-feedback{margin-left:12px;font-size:13px}
+.alarm-bulk-toolbar{padding:14px 0;margin:8px 0 12px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}button:disabled{opacity:.5;cursor:not-allowed}.alarm-selection{flex:0 0 auto;align-self:flex-start;padding-top:4px}.alarm-selection input{min-height:0}.alarm-bulk-toolbar input{min-height:0}
+#sshAlarmsList{max-height:620px;overflow-y:auto;scrollbar-gutter:stable;padding:2px 4px 2px 0}
+.metric-editor{max-width:960px}.metric-presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:14px 0 18px}.metric-preset{padding:16px;border:1px solid var(--border);border-radius:7px;background:#f8fafc}.metric-preset h4{margin:0;font-size:14px}.metric-preset p{margin:6px 0 12px}.metric-editor .form{grid-template-columns:repeat(3,minmax(0,1fr))}.metric-editor .metric-scale-fields{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:680px){.metric-editor .form,.metric-editor .metric-scale-fields,.metric-presets{grid-template-columns:1fr}}
+</style>
+</head><body>
+<div class="container">
+  <div class="page-head">
+    <div><p class="eyebrow">System Status / Administration</p><h1 class="page-title">Update Dashboard</h1><p class="page-description">Manage your monitors, updates, and dashboard access.</p></div>
+    <div class="header-actions"><a class="btn secondary" href="/">View dashboard <span aria-hidden="true">↗</span></a>{% if authenticated %}<a href="{{ url_for('update_logout') }}" class="btn ghost">Log out</a>{% endif %}</div>
+  </div>
+
+  {% if not authenticated %}
+    <div class="center">
+      <div class="card">
+        <div class="section-header"><h3 class="section-title">Access</h3><span class="section-caption">Enter your admin key</span></div>
+        <form method="post" action="{{ url_for('update_login') }}" class="form">
+          <label class="field"><span class="field-label">Admin access key</span><input name="key" placeholder="Access key" required /></label>
+          <div></div>
+          <button class="btn" type="submit">Unlock</button>
+        </form>
+      </div>
+    </div>
+  {% else %}
+    <nav class="tab-shell" aria-label="Dashboard administration"><div class="tabs" role="tablist" aria-label="Administration sections">
+      <button class="tab" id="tab-monitors" type="button" role="tab" aria-controls="panel-monitors" aria-selected="true" tabindex="0">Monitors</button>
+      <button class="tab" id="tab-messages" type="button" role="tab" aria-controls="panel-messages" aria-selected="false" tabindex="-1">Messages</button>
+      <button class="tab" id="tab-incidents" type="button" role="tab" aria-controls="panel-incidents" aria-selected="false" tabindex="-1">Incidents</button>
+      <button class="tab" id="tab-servers" type="button" role="tab" aria-controls="panel-servers" aria-selected="false" tabindex="-1">SSH Servers</button>
+      <button class="tab" id="tab-alarms" type="button" role="tab" aria-controls="panel-alarms" aria-selected="false" tabindex="-1">Alarms</button>
+      <button class="tab" id="tab-reports" type="button" role="tab" aria-controls="panel-reports" aria-selected="false" tabindex="-1">Reports</button>
+      <button class="tab" id="tab-access" type="button" role="tab" aria-controls="panel-access" aria-selected="false" tabindex="-1">Access Keys</button>
+      <button class="tab" id="tab-settings" type="button" role="tab" aria-controls="panel-settings" aria-selected="false" tabindex="-1">Settings</button>
+    </div></nav>
+    <div class="panels">
+      <section class="card tab-panel is-active" id="panel-monitors" role="tabpanel" aria-labelledby="tab-monitors" tabindex="0">
+        <div class="section-header">
+          <h2 class="section-title">Monitors</h2>
+          <span class="section-caption">Create and manage status monitors</span>
+        </div>
+        <form id="addMonitor" class="stack">
+          <h3 class="form-title">Standard status monitor</h3>
+          <div class="row">
+            <label class="field"><span class="field-label">Monitor type</span><select name="kind"><option value="ping">ping</option><option value="tcp">tcp (host:port)</option><option value="html">html</option></select></label>
+            <label class="field"><span class="field-label">Target address</span><input name="target" placeholder="host, host:port, or url" required /></label>
+            <label class="field"><span class="field-label">Server name</span><input name="server_name" placeholder="display name (optional)" /></label>
+          </div>
+          <div class="row chart-options">
+            <label class="field"><span class="field-label">Chart style</span><select name="graph_type"><option value="line">Line</option><option value="bar">Bar</option><option value="indicator">Indicator</option></select></label>
+            <label class="row" style="gap:8px;align-items:center;">
+              <span class="small">Color:</span>
+              <input name="graph_color" type="color" value="#0a84ff" />
+            </label>
+          </div>
+          <div class="small tag-label">Dashboard access tags</div><p class="small" style="margin:0">Select the access keys that can see this monitor. Feature settings for each key also apply.</p>
+          <div id="tagBoxMonitor" class="tag-checkboxes"></div>
+          <div><button class="btn" type="submit">Add monitor</button></div>
+        </form>
+        <div class="divider"></div>
+        <section class="metric-editor" aria-labelledby="metricEditorTitle">
+          <h3 id="metricEditorTitle" class="list-title">Live dial &amp; progress monitors</h3>
+          <p class="small">Display latency or an SSH numeric reading as a dial or bar. Choose None for raw multi-line SSH output. Each metric uses its own sampling interval.</p>
+          <div class="metric-presets" role="group" aria-label="Metric presets"><section class="metric-preset"><h4>Dial Monitor</h4><p class="small">A live needle for latency or any numeric SSH reading.</p><button type="button" class="btn secondary" id="metricPresetDial">Configure dial monitor</button></section><section class="metric-preset"><h4>SSH Progress Monitor</h4><p class="small">Track memory, CPU, temperature, or a custom numeric value.</p><button type="button" class="btn secondary" id="metricPresetProgress">Configure SSH progress monitor</button></section></div>
+          <form id="metricMonitorForm" class="stack">
+            <h4 id="metricFormTitle" class="form-title">New live metric</h4>
+            <div class="form">
+              <label class="field"><span class="field-label">Metric name</span><input id="metricName" name="name" maxlength="256" required placeholder="e.g. Server memory" /></label>
+              <label class="field"><span class="field-label">Metric source</span><select id="metricKind" name="kind"><option value="ping">Ping latency</option><option value="tcp">TCP latency</option><option value="html">HTTP latency</option><option value="ssh">SSH command</option></select></label>
+              <label class="field"><span class="field-label">Display</span><select id="metricDisplay" name="display"><option value="dial">Dial</option><option value="progress">Progress bar</option><option value="none">None · raw command output</option></select></label>
+            </div>
+            <label class="field" id="metricTargetField"><span class="field-label">Target address</span><input id="metricTarget" name="target" required placeholder="Host, host:port, or URL" /></label>
+            <div id="metricSSHFields" class="stack" hidden>
+              <label class="field"><span class="field-label">SSH server</span><select id="metricSSHServer" name="ssh_server_id"><option value="">Select an SSH server</option></select></label>
+              <label class="field"><span class="field-label" id="metricCommandLabel">Numeric command</span><textarea id="metricCommand" name="command" placeholder="Command must output one number"></textarea></label>
+              <label class="field"><span class="field-label">Linux command examples</span><select id="metricExample"><option value="">Choose an example to fill the command</option><option value="ram">RAM usage (%)</option><option value="cpu">CPU usage (%) · 1 second sample</option><option value="temperature">Temperature (°C) · first thermal zone</option></select></label>
+              <p class="small" style="margin:0">Examples fill the form only. Commands run after saving. Temperature requires a readable /sys/class/thermal/thermal_zone0/temp file.</p>
+            </div>
+            <p id="metricOutputHelp" class="small" hidden style="margin:0">None displays raw SSH command output, including multiple lines, without a dial, bar, or numerical formatting.</p>
+            <div class="form metric-scale-fields">
+              <label class="field" data-metric-numeric><span class="field-label">Minimum value</span><input id="metricMin" name="min_value" type="number" step="any" value="0" required /></label>
+              <label class="field" data-metric-numeric><span class="field-label">Maximum value</span><input id="metricMax" name="max_value" type="number" step="any" value="1000" required /></label>
+              <label class="field" data-metric-numeric><span class="field-label">Unit</span><input id="metricUnit" name="unit" maxlength="30" value="ms" placeholder="%, ms, °C" /></label>
+              <label class="field"><span class="field-label">Interval (seconds)</span><input id="metricInterval" name="interval_secs" type="number" min="1" max="86400" step="1" value="10" required /></label>
+            </div>
+            <div class="row" id="metricValueFields">
+              <label class="row" style="gap:7px"><input id="metricShowValue" name="show_value" type="checkbox" checked /><span class="field-label">Show numerical value</span></label>
+              <label class="field" style="max-width:180px"><span class="field-label">Decimal places</span><input id="metricDecimals" name="decimals" type="number" min="0" max="6" step="1" value="1" required /></label>
+            </div>
+            <div class="row" id="metricColorFields">
+              <label class="row"><span class="field-label">Dial / bar color</span><input id="metricColor" name="color" type="color" value="#1761d1" /></label>
+              <label class="row"><span class="field-label">Needle color</span><input id="metricNeedleColor" name="needle_color" type="color" value="#18243a" /></label>
+            </div>
+            <div class="small tag-label">Dashboard access tags</div><div id="tagBoxMetric" class="tag-checkboxes"></div>
+            <div class="row"><button id="saveMetricMonitor" class="btn" type="submit">Add live metric</button><button id="cancelMetricEdit" class="btn secondary" type="button" hidden>Cancel edit</button><span id="metricMonitorStatus" class="small" role="status"></span></div>
+          </form>
+        </section>
+        <div class="divider"></div><h3 class="list-title">Current monitors</h3>
+
+        <div id="monitors" class="records" data-empty="No monitors yet. Add your first monitor above."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-messages" role="tabpanel" aria-labelledby="tab-messages" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">Developer Messages</h2>
+          <span class="section-caption">Post updates for users</span>
+        </div>
+        <form id="addDev" class="stack">
+          <h3 class="form-title">New message</h3>
+          <label class="field"><span class="field-label">Title</span><input name="title" placeholder="Message title" required /></label>
+          <label class="field"><span class="field-label">Message</span><textarea name="message" placeholder="Message" required></textarea></label>
+          <div class="small tag-label">Dashboard access tags</div>
+          <div id="tagBoxDev" class="tag-checkboxes"></div>
+          <div><button class="btn" type="submit">Publish message</button></div>
+        </form>
+        <div class="divider"></div><h3 class="list-title">Published messages</h3>
+        <div id="devlist" class="records" data-empty="No developer messages published yet."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-incidents" role="tabpanel" aria-labelledby="tab-incidents" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">Incidents</h2>
+          <span class="section-caption">Log incidents by severity</span>
+        </div>
+        <form id="addIncident" class="stack">
+          <h3 class="form-title">New incident</h3>
+          <div class="row">
+            <label class="field"><span class="field-label">Incident severity</span><select name="tag"><option>event</option><option>warning</option><option>minor</option><option>major</option></select></label>
+          </div>
+          <label class="field"><span class="field-label">Title</span><input name="title" placeholder="Incident title" required /></label>
+          <label class="field"><span class="field-label">Message</span><textarea name="message" placeholder="Incident message" required></textarea></label>
+          <div class="small tag-label">Dashboard access tags</div>
+          <div id="tagBoxIncident" class="tag-checkboxes"></div>
+          <div><button class="btn" type="submit">Log incident</button></div>
+        </form>
+        <div class="divider"></div><h3 class="list-title">Incident history</h3>
+        <div id="incidentlist" class="records" data-empty="No incidents logged."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-servers" role="tabpanel" aria-labelledby="tab-servers" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">SSH Server Configuration</h2>
+          <span class="section-caption">Add and manage servers</span>
+        </div>
+        <form id="addSSHServer" class="form">
+          <h3 class="form-title">New SSH server</h3>
+          <label class="field"><span class="field-label">Server name</span><input name="server_name" placeholder="Server name (e.g., debian-prod-01)" required /></label>
+          <label class="field"><span class="field-label">IP address</span><input name="ip_address" placeholder="IP Address" required /></label>
+          <label class="field"><span class="field-label">SSH username</span><input name="username" placeholder="SSH Username" required /></label>
+          <label class="field"><span class="field-label">SSH password</span><input name="password" type="password" placeholder="SSH Password" required /></label>
+          <label class="field"><span class="field-label">SSH port</span><input name="port" type="number" placeholder="Port (22)" value="22" /></label>
+          <label class="field"><span class="field-label">Fetch interval (seconds)</span><input name="fetch_interval" type="number" placeholder="Interval (300s)" value="300" /></label>
+          <label style="display:flex;align-items:center;gap:6px;">
+            <input name="auto_fetch_enabled" type="checkbox" />Enable Auto-Fetch
+          </label>
+          <button class="btn" type="submit">Add SSH Server</button>
+        </form>
+        <div class="divider"></div><h3 class="list-title">Configured servers</h3>
+        <div id="sshServersList" class="records" data-empty="No SSH servers configured yet."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-alarms" role="tabpanel" aria-labelledby="tab-alarms" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">SSH Server Alarms</h2>
+          <span class="section-caption">Create, fetch and manage alarms</span>
+        </div>
+        <form id="addSSHAlarm" class="stack">
+          <h3 class="form-title">New alarm</h3>
+          <div class="row">
+            <label class="field"><span class="field-label">Server</span><select name="server_name" id="serverSelect" required>
+              <option value="">Select Server</option>
+            </select></label>
+            <label class="field"><span class="field-label">Severity</span><select name="severity"><option value="info">Info</option><option value="warning">Warning</option><option value="critical">Critical</option></select></label>
+          </div>
+          <label class="field"><span class="field-label">Message</span><input name="message" placeholder="Alarm message" required /></label>
+          <label class="field"><span class="field-label">Additional details</span><textarea name="details" placeholder="Additional details (optional)"></textarea></label>
+          <div class="small tag-label">Dashboard access tags</div>
+          <div name="dashboard_tag" id="tagBoxAlarm" class="tag-checkboxes"></div>
+          <div><button class="btn" type="submit">Add alarm</button></div>
+        </form>
+        <div class="row" style="gap:10px;align-items:center;margin:8px 0 6px;">
+          <button id="showActiveAlarms" class="btn" aria-pressed="true">Active Alarms</button>
+          <button id="showHistoryAlarms" class="btn secondary" aria-pressed="false">History Alarms</button><button id="showResolvedAlarms" class="btn secondary" aria-pressed="false">Resolved Alarms</button>
+          <button id="fetchAllAlarms" class="btn">Fetch All Server Alarms</button>
+          <button id="fetchEnabledAlarms" class="btn" style="background:var(--warn)">Fetch Auto-Enabled Servers Only</button>
+          <span class="small" style="margin-left:auto">Filter:</span>
+          <select id="alarmFilterTag" class="small"><option value="">All tags</option></select>
+        </div>
+        <p class="small">History contains detected conditions that cleared automatically, plus recent system journal warnings and errors fetched when SSH auto-fetch is enabled and the journal is readable. Move manual active alarms to History when their condition clears. Resolved contains alarms explicitly forced resolved.</p>
+        <div class="alarm-bulk-toolbar row" role="group" aria-label="Bulk alarm actions">
+          <label class="row" style="gap:7px"><input id="selectAllAlarms" type="checkbox" disabled> Select all in current list</label>
+          <span id="alarmSelectionCount" class="small" aria-live="polite">0 selected</span>
+          <button id="resolveSelectedAlarms" type="button" class="btn secondary" disabled>Resolve selected</button>
+          <button id="historySelectedAlarms" type="button" class="btn secondary" disabled>Move selected to history</button>
+          <button id="deleteSelectedAlarms" type="button" class="btn danger" disabled>Delete selected</button>
+          <span id="alarmBulkStatus" class="small" role="status"></span>
+        </div>
+        <div id="sshAlarmsList" class="records" data-empty="No alarms in this view."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-reports" role="tabpanel" aria-labelledby="tab-reports" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">Issue Reports</h2>
+          <span class="section-caption">Recent user-submitted issues</span>
+        </div>
+        <div class="row" style="gap:10px;align-items:center;margin-bottom:8px;">
+          <span class="small">Filter by tag:</span>
+          <select id="reportsFilterTag" class="small"><option value="">All tags</option></select>
+        </div>
+        <div id="reportlist" class="records" data-empty="No issue reports in this view."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-access" role="tabpanel" aria-labelledby="tab-access" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">Access Keys</h2>
+          <span class="section-caption">Create and control access keys</span>
+        </div>
+        <form id="addDashboardTag" class="form">
+          <h3 class="form-title">New access key</h3>
+          <label class="field"><span class="field-label">Tag name</span><input name="tag" placeholder="Tag name" required /></label>
+          <label class="field"><span class="field-label">Expires after</span><select name="expiry">
+            <option value="unlimited">Unlimited</option>
+            <option value="10m">10 minutes</option>
+            <option value="30m">30 minutes</option>
+            <option value="1d">1 day</option>
+            <option value="30d">30 days</option>
+          </select></label>
+          <button class="btn" type="submit">Create access key</button>
+        </form>
+        <div class="divider"></div><h3 class="list-title">Dashboard access keys</h3>
+        <div id="dashboardTagsList" class="records" data-empty="No access keys available."></div>
+      </section>
+
+      <section class="card tab-panel" id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" tabindex="0" hidden>
+        <div class="section-header">
+          <h2 class="section-title">Sampling Settings</h2>
+          <span class="section-caption">Adjust sampling interval (global or per tag)</span>
+        </div>
+        <form id="setIntervalForm" class="form">
+          <h3 class="form-title">Sampling frequency</h3><p class="small" style="grid-column:1/-1;margin:0">A tag override takes precedence over the global default. Saved intervals apply to dashboard polling on its next refresh.</p>
+          <label class="field"><span class="field-label">Apply interval to</span><select id="intervalTagSelect" name="tag" required>
+            <option value="__global__">Global (default for tags without override)</option>
+          </select></label>
+          <label class="field"><span class="field-label">Sampling interval</span><select id="intervalSelect" name="interval">
+            <option value="10">10 sec</option>
+            <option value="30">30 sec</option>
+            <option value="60">1 min</option>
+            <option value="120">2 min</option>
+            <option value="300">5 min</option>
+            <option value="600">10 min</option>
+            <option value="900">15 min</option>
+            <option value="1800">30 min</option>
+            <option value="3600">60 min</option>
+            <option value="7200">2 hours</option>
+            <option value="18000">5 hours</option>
+            <option value="43200">12 hours</option>
+            <option value="86400">1 day</option>
+            <option value="259200">3 days</option>
+            <option value="604800">1 week</option>
+            <option value="2592000">1 month</option>
+          </select></label>
+          <button class="btn" type="submit">Save interval</button>
+          <span class="small" id="intervalMsg"></span>
+        </form>
+        <div class="divider"></div><h3 class="list-title">Sampling intervals</h3>
+        <div class="small" id="intervalTableWrap"></div>
+        <script>
+          let intervalRows = [];
+          function syncIntervalSelection(){
+            const scope = document.getElementById('intervalTagSelect').value;
+            const row = intervalRows.find(row => (row.tag || '__global__') === scope) || intervalRows.find(row => !row.tag);
+            if (!row) return;
+            const select = document.getElementById('intervalSelect');
+            if (!Array.from(select.options).some(option => option.value === String(row.seconds))) select.add(new Option(row.seconds + ' sec', row.seconds));
+            select.value = String(row.seconds);
+          }
+          document.getElementById('intervalTagSelect').addEventListener('change', syncIntervalSelection);
+          async function loadIntervalTable(){
+            try{
+              const rows = await q('/update/api/sampler_intervals');
+              intervalRows = rows; syncIntervalSelection();
+              const html = `<table class="small" style="width:100%;border-collapse:collapse;">`
+                +`<thead><tr><th style="text-align:left;padding:6px;border-bottom:1px solid rgba(0,0,0,.06);">Tag</th><th style="text-align:left;padding:6px;border-bottom:1px solid rgba(0,0,0,.06);">Interval (s)</th></tr></thead>`
+                +`<tbody>` + rows.map(r=>`<tr><td style="padding:6px;border-bottom:1px solid rgba(0,0,0,.04);">${escapeHtml(r.tag||'Global default')}</td><td style="padding:6px;border-bottom:1px solid rgba(0,0,0,.04);">${r.seconds}</td></tr>`).join('') + `</tbody></table>`;
+              document.getElementById('intervalTableWrap').innerHTML = html;
+            }catch(e){ document.getElementById('intervalTableWrap').textContent = 'Failed to load intervals'; }
+          }
+          document.getElementById('setIntervalForm').addEventListener('submit', async (ev)=>{
+            ev.preventDefault();
+            const tagSel = document.getElementById('intervalTagSelect');
+            const sel = document.getElementById('intervalSelect');
+            const chosen = tagSel.value;
+            const val = parseInt(sel.value, 10);
+            const msg = document.getElementById('intervalMsg');
+            msg.textContent = '';
+            try{
+              const body = (chosen === '__global__') ? { seconds: val } : { seconds: val, tag: chosen };
+              const r = await fetch('/update/api/sampler_interval', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+              const js = await r.json();
+              if(!r.ok){ msg.textContent = js.error || 'error'; return; }
+              msg.textContent = 'Saved. Dashboard applies this interval on its next refresh.';
+              await loadIntervalTable();
+            } catch(e){ msg.textContent = 'error'; }
+          });
+          document.addEventListener('DOMContentLoaded', loadIntervalTable);
+        </script>
+      </section>
+    </div>
+
+    <dialog id="monitorAccessDialog" class="access-dialog" aria-labelledby="monitorAccessTitle">
+      <form id="monitorAccessForm"><h2 id="monitorAccessTitle">Monitor access</h2><p class="small">Choose the access keys that can see this monitor. Select at least one.</p><div id="monitorAccessChoices" class="tag-checkboxes"></div><p id="monitorAccessError" class="small" role="status"></p><div class="row"><button class="btn" type="submit">Save access</button><button class="btn secondary" type="button" id="cancelMonitorAccess">Cancel</button></div></form>
+    </dialog>
+    <script>
+      const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      let dashboardKeys = [], monitorRecords = new Map(), editingMonitorId = null;
+      (() => {
+        const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+        function activate(key, focus = false, updateHash = true) {
+          const selected = tabs.find(tab => tab.id === 'tab-' + key) || tabs[0];
+          tabs.forEach(tab => {
+            const active = tab === selected;
+            tab.setAttribute('aria-selected', String(active));
+            tab.tabIndex = active ? 0 : -1;
+            const panel = document.getElementById(tab.getAttribute('aria-controls'));
+            panel.hidden = !active;
+            panel.classList.toggle('is-active', active);
+          });
+          if (focus) selected.focus({preventScroll: true});
+          if ((focus || updateHash) && window.matchMedia('(max-width: 680px)').matches) {
+            selected.scrollIntoView({block: 'nearest', inline: 'nearest'});
+          }
+          if (updateHash) history.replaceState(null, '', '#' + selected.id.slice(4));
+        }
+        tabs.forEach((tab, index) => {
+          tab.addEventListener('click', () => activate(tab.id.slice(4)));
+          tab.addEventListener('keydown', event => {
+            let next;
+            if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+            if (event.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+            if (event.key === 'Home') next = 0;
+            if (event.key === 'End') next = tabs.length - 1;
+            if (next !== undefined) { event.preventDefault(); activate(tabs[next].id.slice(4), true); }
+          });
+        });
+        window.addEventListener('hashchange', () => activate(location.hash.slice(1), false, false));
+        activate(location.hash.slice(1), false, false);
+      })();
+      async function q(url, opts){ const r = await fetch(url, opts); if(!r.ok) throw r; return r.json(); }
+      let currentAlarmView = 'active';
+      async function refresh(){
+        try {
+          const mon = await q('/update/api/status_all');
+          monitorRecords = new Map(mon.map(m => [Number(m.id), m]));
+          document.getElementById('monitors').innerHTML = mon.map(m => {
+            const tags = Array.isArray(m.tags) ? m.tags : (m.dashboard_tag ? [m.dashboard_tag] : []);
+            const label = tags.length ? tags.map(t => (window.disabledTagNames && window.disabledTagNames.has(t)) ? `${t}:Disabled` : t).join(', ') : '';
+            return `
+              <div class="item row">
+                <div style="flex:1">
+                  <strong>${escapeHtml(m.kind)}</strong> ${escapeHtml(m.server_name || m.target)}
+                  <span class="small">${escapeHtml(m.target)} ID:${escapeHtml(m.display_id ?? '—')}${label ? ` — <span class="small" style="color:#6b7280">Tags: ${escapeHtml(label)}</span>` : ''}</span>
+                  <br>
+                  <span class="small">Graph: ${escapeHtml(m.graph_type)} <span style="color:${m.graph_color}">●</span></span>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button onclick="delMon(${m.id})" class="btn">Delete</button>
+                  ${m.metric ? `<button type="button" data-edit-metric="${m.id}" class="btn secondary">Edit metric</button>` : ''}
+                  <button onclick="editStatusTag(${m.id})" class="btn secondary">Edit access</button>
+                </div>
+              </div>`;
+          }).join('');
+
+          const dev = await q('/update/api/dev_messages_all');
+          document.getElementById('devlist').innerHTML = dev.map(d => {
+            const tags = Array.isArray(d.tags) ? d.tags : (d.dashboard_tag ? [d.dashboard_tag] : []);
+            const label = tags.length ? tags.map(t => (window.disabledTagNames && window.disabledTagNames.has(t)) ? `${t}:Disabled` : t).join(', ') : '';
+            return `
+              <div class="item row">
+                <div style="flex:1">
+                  <strong>${escapeHtml(d.title)}</strong> — ${escapeHtml(d.message)}
+                  <span class="small">ID:${escapeHtml(d.display_id ?? '—')}${label ? ` — <span class="small" style="color:#6b7280">Tags: ${escapeHtml(label)}</span>` : ''}</span>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button onclick="delDev(${d.id})" class="btn">Del</button>
+                  <button onclick="editDevTag(${d.id}, '${d.dashboard_tag || ''}')" class="btn secondary">Edit Tag</button>
+                </div>
+              </div>`;
+          }).join('');
+
+          const inc = await q('/update/api/incidents_all');
+          document.getElementById('incidentlist').innerHTML = inc.map(i => {
+            const tags = Array.isArray(i.tags) ? i.tags : (i.dashboard_tag ? [i.dashboard_tag] : []);
+            const label = tags.length ? tags.map(t => (window.disabledTagNames && window.disabledTagNames.has(t)) ? `${t}:Disabled` : t).join(', ') : '';
+            return `
+              <div class="item row">
+                <div style="flex:1">
+                  <strong>[${escapeHtml(i.tag)}] ${escapeHtml(i.title)}</strong> — ${escapeHtml(i.message)}
+                  <span class="small">ID:${escapeHtml(i.display_id ?? '—')}${label ? ` — <span class="small" style="color:#6b7280">Tags: ${escapeHtml(label)}</span>` : ''}</span>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button onclick="delInc(${i.id})" class="btn">Del</button>
+                  <button onclick="editIncidentTag(${i.id}, '${i.dashboard_tag || ''}')" class="btn secondary">Edit Tag</button>
+                </div>
+              </div>`;
+          }).join('');
+
+          const repSel = document.getElementById('reportsFilterTag');
+          const repTag = repSel ? repSel.value : '';
+          const reps = await q('/api/reports?n=50' + (repTag?('&tag='+encodeURIComponent(repTag)) : ''));
+          document.getElementById('reportlist').innerHTML = reps.map(r =>
+            `<div class="item row">
+              <div style="flex:1">
+                <strong>${escapeHtml(r.username)}</strong> (${escapeHtml(r.license_number)})
+                <div class="small">${escapeHtml(r.issue)}</div>
+                <div class="small">${r.created_at}</div>
+              </div>
+              <div><button onclick="delRep(${r.id})" class="btn">Del</button></div>
+            </div>`
+          ).join('');
+
+          await refreshSSHServers();
+          await refreshSSHAlarms();
+          await refreshDashboardTags();
+          await populateTagDropdowns();
+        } catch(e){ console.error(e); }
+      }
+
+      async function editStatusTag(id){
+        editingMonitorId = Number(id);
+        try {
+          dashboardKeys = await q('/update/api/dashboard_keys');
+          const monitor = monitorRecords.get(editingMonitorId);
+          const selected = new Set(monitor?.tags || (monitor?.dashboard_tag ? [monitor.dashboard_tag] : []));
+          document.getElementById('monitorAccessChoices').innerHTML = dashboardKeys.map(k => `<label><input type="checkbox" value="${escapeHtml(k.tag)}" ${selected.has(k.tag) ? 'checked' : ''}> ${escapeHtml(k.tag)}${k.is_active ? '' : ' (disabled)'}</label>`).join('');
+          document.getElementById('monitorAccessError').textContent = '';
+          document.getElementById('monitorAccessDialog').showModal();
+        } catch(error) { alert('Could not load access keys. Please try again.'); }
+      }
+      document.getElementById('cancelMonitorAccess').addEventListener('click', () => document.getElementById('monitorAccessDialog').close());
+      document.getElementById('monitorAccessForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const tags = Array.from(document.querySelectorAll('#monitorAccessChoices input:checked'), input => input.value);
+        const error = document.getElementById('monitorAccessError');
+        if (!tags.length) { error.textContent = 'Select at least one access key.'; return; }
+        try {
+          await q(`/update/api/status/${editingMonitorId}/set_tag`, {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({tags})});
+          document.getElementById('monitorAccessDialog').close();
+          await refresh();
+        } catch(err) { error.textContent = 'Could not save access. Please try again.'; }
+      });
+      async function editDevTag(id, current){
+        const val = prompt('Set tag (leave blank for none):', current || '');
+        if(val === null) return;
+        try{ await q(`/update/api/dev/${id}/set_tag`, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({dashboard_tag: val || null})}); refresh(); }
+        catch(e){ alert('Error updating tag'); }
+      }
+      async function editIncidentTag(id, current){
+        const val = prompt('Set tag (leave blank for none):', current || '');
+        if(val === null) return;
+        try{ await q(`/update/api/incidents/${id}/set_tag`, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({dashboard_tag: val || null})}); refresh(); }
+        catch(e){ alert('Error updating tag'); }
+      }
+
+      async function refreshSSHServers(){
+        try {
+          const servers = await q('/api/ssh_servers');
+          document.getElementById('sshServersList').innerHTML = servers.map(s=>
+            `<div class="item row">
+              <div style="flex:1">
+                <strong>${escapeHtml(s.server_name)}</strong> - ${escapeHtml(s.ip_address)}:${s.port}
+                <div class="small">User: ${escapeHtml(s.username)} | Interval: ${s.fetch_interval}s</div>
+                <div class="small">Last fetch: ${s.last_fetch ? new Date(s.last_fetch).toLocaleString() : 'Never'}</div>
+                <div class="small">Auto-fetch: <span style="color:${s.auto_fetch_enabled ? '#16a34a' : '#ef4444'}">${s.auto_fetch_enabled ? '✅ Enabled' : '❌ Disabled'}</span></div>
+              </div>
+              <div style="display:flex;gap:4px;flex-direction:column;">
+                <div style="display:flex;gap:4px;">
+                  <button onclick="testSSHConnection(${s.id})" class="btn">Test</button>
+                  <button onclick="testSSHAlarms(${s.id})" class="btn" style="background:var(--good)">Test Alarms</button>
+                  <button onclick="delSSHServer(${s.id})" class="btn danger">Del</button>
+                </div>
+                <button onclick="toggleAutoFetch(${s.id}, ${!s.auto_fetch_enabled})" class="btn" style="background:${s.auto_fetch_enabled ? '#ef4444' : '#16a34a'};">
+                  ${s.auto_fetch_enabled ? 'Disable Auto-Fetch' : 'Enable Auto-Fetch'}
+                </button>
+              </div>
+            </div>`
+          ).join('');
+          const metricSSHSelect = document.getElementById('metricSSHServer');
+          const selectedMetricServer = metricSSHSelect.value;
+          metricSSHSelect.innerHTML = '<option value="">Select an SSH server</option>' + servers.map(server => `<option value="${Number(server.id)}">${escapeHtml(server.server_name)}</option>`).join('');
+          metricSSHSelect.value = selectedMetricServer;
+          const serverSelect = document.getElementById('serverSelect');
+          serverSelect.innerHTML = '<option value="">Select Server</option>' +
+            servers.map(s => `<option value="${escapeHtml(s.server_name)}">${escapeHtml(s.server_name)}</option>`).join('');
+        } catch(e){ console.error(e); }
+      }
+
+      async function populateTagDropdowns(){
+        try{
+          const enabled = await q('/update/api/dashboard_keys_enabled');
+          const opts = enabled.map(k=>`<option value="${escapeHtml(k.tag)}">${escapeHtml(k.tag)}</option>`).join('');
+          ['intervalTagSelect','alarmFilterTag','reportsFilterTag'].forEach(id=>{ const el = document.getElementById(id); if(el) { const selected = el.value; const first = el.options[0].outerHTML; el.innerHTML = first + opts; if (Array.from(el.options).some(option => option.value === selected)) el.value = selected; } });
+          const renderBoxes = (id) => {
+            const el = document.getElementById(id);
+            if(!el) return;
+            const checked = new Set(Array.from(el.querySelectorAll('input:checked'), input => input.value));
+            el.innerHTML = enabled.map(k=>`<label style="display:block;">
+              <input type="checkbox" value="${escapeHtml(k.tag)}" ${checked.has(k.tag) ? 'checked' : ''}> ${escapeHtml(k.tag)}
+            </label>`).join('');
+          };
+          renderBoxes('tagBoxMonitor');
+          renderBoxes('tagBoxMetric');
+          renderBoxes('tagBoxDev');
+          renderBoxes('tagBoxIncident');
+          renderBoxes('tagBoxAlarm');
+        }catch(e){ console.error('tag opts', e); }
+      }
+
+      let alarmRows = [], selectedAlarmIds = new Set(), alarmListLoading = false, alarmBulkBusy = false, alarmListRequest = 0;
+      function updateAlarmSelection(){
+        const count = selectedAlarmIds.size;
+        const all = document.getElementById('selectAllAlarms');
+        all.checked = alarmRows.length > 0 && count === alarmRows.length;
+        all.indeterminate = count > 0 && count < alarmRows.length;
+        all.disabled = alarmListLoading || alarmBulkBusy || alarmRows.length === 0;
+        document.getElementById('alarmSelectionCount').textContent = count + ' selected';
+        document.getElementById('deleteSelectedAlarms').disabled = !count || alarmListLoading || alarmBulkBusy;
+        document.getElementById('resolveSelectedAlarms').hidden = currentAlarmView === 'resolved';
+        document.getElementById('resolveSelectedAlarms').disabled = !count || alarmListLoading || alarmBulkBusy || currentAlarmView === 'resolved';
+        const canMove = currentAlarmView === 'active' && count > 0 && alarmRows.filter(alarm => selectedAlarmIds.has(Number(alarm.id))).every(alarm => alarm.source === 'manual');
+        document.getElementById('historySelectedAlarms').hidden = currentAlarmView !== 'active';
+        document.getElementById('historySelectedAlarms').disabled = !canMove || alarmListLoading || alarmBulkBusy;
+        document.querySelectorAll('#sshAlarmsList input[data-alarm-id]').forEach(input => { input.checked = selectedAlarmIds.has(Number(input.dataset.alarmId)); input.disabled = alarmListLoading || alarmBulkBusy; });
+        ['showActiveAlarms','showHistoryAlarms','showResolvedAlarms','alarmFilterTag','fetchAllAlarms','fetchEnabledAlarms'].forEach(id => { document.getElementById(id).disabled = alarmBulkBusy; });
+        document.querySelectorAll('#sshAlarmsList button').forEach(button => { button.disabled = alarmBulkBusy; });
+      }
+      document.getElementById('selectAllAlarms').addEventListener('change', event => {
+        selectedAlarmIds = event.target.checked ? new Set(alarmRows.map(alarm => Number(alarm.id))) : new Set();
+        updateAlarmSelection();
+      });
+      document.getElementById('sshAlarmsList').addEventListener('change', event => {
+        const input = event.target.closest('input[data-alarm-id]');
+        if (!input) return;
+        const id = Number(input.dataset.alarmId);
+        if (input.checked) selectedAlarmIds.add(id); else selectedAlarmIds.delete(id);
+        updateAlarmSelection();
+      });
+      document.getElementById('alarmFilterTag').addEventListener('change', () => refreshSSHAlarms());
+      document.getElementById('reportsFilterTag').addEventListener('change', () => refresh());
+      async function submitBulkAlarms(action){
+        if (alarmBulkBusy || alarmListLoading || !selectedAlarmIds.size || (action === 'resolve' && currentAlarmView === 'resolved')) return;
+        if (action === 'history' && (currentAlarmView !== 'active' || alarmRows.some(alarm => selectedAlarmIds.has(Number(alarm.id)) && alarm.source !== 'manual'))) return;
+        const ids = Array.from(selectedAlarmIds);
+        if (action === 'delete' && !confirm(`Delete ${ids.length} selected alarm${ids.length === 1 ? '' : 's'}? This cannot be undone.`)) return;
+        const status = document.getElementById('alarmBulkStatus');
+        alarmBulkBusy = true; updateAlarmSelection(); status.textContent = 'Saving…';
+        try {
+          const result = await q('/update/api/ssh_alarms/bulk', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,ids})});
+          await refreshSSHAlarms(true);
+          status.textContent = `${result.updated} alarm${result.updated === 1 ? '' : 's'} ${action === 'delete' ? 'deleted' : action === 'history' ? 'moved to history' : 'resolved'}.`;
+        } catch(error) { status.textContent = 'Could not update alarms. Please try again.'; }
+        finally { alarmBulkBusy = false; updateAlarmSelection(); }
+      }
+      document.getElementById('resolveSelectedAlarms').addEventListener('click', () => submitBulkAlarms('resolve'));
+      document.getElementById('historySelectedAlarms').addEventListener('click', () => submitBulkAlarms('history'));
+      document.getElementById('deleteSelectedAlarms').addEventListener('click', () => submitBulkAlarms('delete'));
+      async function refreshSSHAlarms(preserveStatus = false){
+        const request = ++alarmListRequest;
+        selectedAlarmIds.clear(); alarmRows = []; alarmListLoading = true;
+        updateAlarmSelection();
+        if (!preserveStatus) document.getElementById('alarmBulkStatus').textContent = '';
+        document.getElementById('sshAlarmsList').textContent = 'Loading alarms…';
+        try {
+          const sel = document.getElementById('alarmFilterTag');
+          const tag = sel ? sel.value : '';
+          const alarms = await q('/update/api/ssh_alarms_all?type=' + currentAlarmView + (tag?('&tag='+encodeURIComponent(tag)):'') );
+          if (request !== alarmListRequest) return;
+          alarmRows = alarms;
+          document.getElementById('sshAlarmsList').innerHTML = alarms.map(a=>{
+            const dotColor = currentAlarmView === 'active' ? 'var(--danger)' : currentAlarmView === 'history' ? 'var(--warn)' : 'var(--good)';
+            const dotShadow = '0 0 0 4px ' + (currentAlarmView === 'active' ? 'rgba(239,68,68,.14)' : currentAlarmView === 'history' ? 'rgba(245,158,11,.14)' : 'rgba(22,163,74,.14)');
+            return `<div class="item row">
+              <label class="alarm-selection"><input type="checkbox" data-alarm-id="${Number(a.id)}" aria-label="${escapeHtml('Select alarm ID:' + (a.display_id ?? '—') + ' from ' + a.server_name)}"></label>
+              <div style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <div class="indicator-dot" style="background-color:${dotColor};box-shadow:${dotShadow};"></div>
+                  <strong>${escapeHtml(a.server_name)}</strong>
+                  <span style="color:${a.severity==='critical'?'#ef4444':a.severity==='warning'?'#f59e0b':'#0a84ff'}">${a.severity.toUpperCase()}</span>
+                </div>
+                <div class="small" style="margin-left:20px;">${escapeHtml(a.message)}</div>
+                ${a.details ? `<div class="small" style="color:#6b7280;margin-left:20px;">${escapeHtml(a.details)}</div>` : ''}
+                <div class="small" style="margin-left:20px;">ID:${escapeHtml(a.display_id ?? '—')} ${a.created_at} ${a.resolved_at ? '(' + (currentAlarmView === 'history' ? 'Cleared: ' : 'Resolved: ') + escapeHtml(a.resolved_at) + ')' : ''} · Source: ${escapeHtml(a.source || 'manual')}</div>
+              </div>
+              <div style="display:flex;gap:4px;">
+                ${currentAlarmView !== 'resolved' ? `<button onclick="resolveAlarm(${a.id})" class="btn" style="background:var(--good);">Resolve</button>` : ''}
+                ${currentAlarmView === 'active' && a.source === 'manual' ? `<button onclick="moveAlarmToHistory(${a.id})" class="btn secondary">Move to history</button>` : ''}
+                <button onclick="delSSHAlarm(${a.id})" class="btn danger">Del</button>
+              </div>
+            </div>`;
+          }).join('');
+        } catch(e){ if (request === alarmListRequest) { document.getElementById('sshAlarmsList').textContent = 'Could not load alarms. Please try again.'; if (preserveStatus) throw e; } }
+        finally { if (request === alarmListRequest) { alarmListLoading = false; updateAlarmSelection(); } }
+      }
+
+      let editingMetricId = null;
+      const metricForm = document.getElementById('metricMonitorForm');
+      function syncMetricSource(){
+        const none = document.getElementById('metricDisplay').value === 'none';
+        const kind = document.getElementById('metricKind');
+        if (none) {
+          kind.value = 'ssh';
+          const min = Number(document.getElementById('metricMin').value), max = Number(document.getElementById('metricMax').value);
+          if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) { document.getElementById('metricMin').value = '0'; document.getElementById('metricMax').value = '100'; }
+          const decimals = Number(document.getElementById('metricDecimals').value);
+          if (!Number.isInteger(decimals) || decimals < 0 || decimals > 6) document.getElementById('metricDecimals').value = '1';
+        }
+        Array.from(kind.options).forEach(option => { option.disabled = none && option.value !== 'ssh'; });
+        document.querySelectorAll('[data-metric-numeric]').forEach(field => { field.hidden = none; });
+        document.getElementById('metricValueFields').hidden = none;
+        document.getElementById('metricColorFields').hidden = none;
+        document.getElementById('metricOutputHelp').hidden = !none;
+        document.getElementById('metricCommandLabel').textContent = none ? 'SSH command' : 'Numeric command';
+        document.getElementById('metricCommand').placeholder = none ? 'Command output may contain multiple lines' : 'Command must output one number';
+        ['metricMin','metricMax','metricDecimals'].forEach(id => { document.getElementById(id).required = !none; });
+        const ssh = kind.value === 'ssh';
+        document.getElementById('metricSSHFields').hidden = !ssh;
+        document.getElementById('metricTargetField').hidden = ssh;
+        document.getElementById('metricTarget').required = !ssh;
+        document.getElementById('metricSSHServer').required = ssh;
+        document.getElementById('metricCommand').required = ssh;
+      }
+      function resetMetricForm(){
+        editingMetricId = null; metricForm.reset(); syncMetricSource();
+        document.getElementById('metricFormTitle').textContent = 'New live metric';
+        document.getElementById('saveMetricMonitor').textContent = 'Add live metric';
+        document.getElementById('cancelMetricEdit').hidden = true;
+        document.querySelectorAll('#tagBoxMetric input').forEach(input => { input.checked = false; });
+        document.getElementById('metricMonitorStatus').textContent = '';
+      }
+      document.getElementById('metricDisplay').addEventListener('change', syncMetricSource);
+      document.getElementById('metricKind').addEventListener('change', () => {
+        syncMetricSource();
+        if (!editingMetricId) { document.getElementById('metricUnit').value = document.getElementById('metricKind').value === 'ssh' ? '%' : 'ms'; document.getElementById('metricMax').value = document.getElementById('metricKind').value === 'ssh' ? '100' : '1000'; }
+      });
+      document.getElementById('metricPresetDial').addEventListener('click', () => { resetMetricForm(); document.getElementById('metricName').focus(); });
+      document.getElementById('metricPresetProgress').addEventListener('click', () => {
+        resetMetricForm(); document.getElementById('metricKind').value = 'ssh'; document.getElementById('metricDisplay').value = 'progress'; document.getElementById('metricUnit').value = '%'; document.getElementById('metricMax').value = '100'; syncMetricSource(); document.getElementById('metricName').focus();
+      });
+      document.getElementById('cancelMetricEdit').addEventListener('click', resetMetricForm);
+      const metricCommands = {
+        ram: `awk '/MemTotal:/ {total=$2} /MemAvailable:/ {available=$2} END {if(total>0) printf "%.2f\\n",100*(total-available)/total}' /proc/meminfo`,
+        cpu: `LC_ALL=C top -bn2 -d1 | awk '/Cpu\\(s\\)/ {for(i=1;i<=NF;i++) if($i ~ /id,?$/) idle=$(i-1)} END {if(idle!="") print 100-idle}'`,
+        temperature: `awk '{print $1/1000}' /sys/class/thermal/thermal_zone0/temp`
+      };
+      document.getElementById('metricExample').addEventListener('change', event => {
+        const example = event.target.value; if (!metricCommands[example]) return;
+        document.getElementById('metricCommand').value = metricCommands[example];
+        document.getElementById('metricUnit').value = example === 'temperature' ? '°C' : '%';
+        document.getElementById('metricMin').value = '0'; document.getElementById('metricMax').value = '100';
+      });
+      document.getElementById('monitors').addEventListener('click', async event => {
+        const button = event.target.closest('[data-edit-metric]'); if (!button) return;
+        const record = monitorRecords.get(Number(button.dataset.editMetric)); if (!record?.metric) return;
+        await Promise.all([refreshSSHServers(), populateTagDropdowns()]);
+        resetMetricForm(); editingMetricId = Number(record.id);
+        const metric = record.metric;
+        const values = {metricName:record.server_name || record.name || '',metricKind:record.kind,metricDisplay:record.graph_type,metricTarget:record.target || '',metricSSHServer:metric.ssh_server_id || '',metricCommand:metric.command || '',metricMin:metric.min_value,metricMax:metric.max_value,metricUnit:metric.unit || '',metricInterval:metric.interval_secs,metricDecimals:metric.decimals ?? 1,metricColor:record.graph_color || '#1761d1',metricNeedleColor:metric.needle_color || '#18243a'};
+        Object.entries(values).forEach(([id,value]) => { document.getElementById(id).value = value; });
+        document.getElementById('metricShowValue').checked = metric.show_value !== false;
+        const tags = new Set(record.tags || []); document.querySelectorAll('#tagBoxMetric input').forEach(input => { input.checked = tags.has(input.value); });
+        syncMetricSource(); document.getElementById('metricFormTitle').textContent = 'Edit live metric ID:' + (record.display_id ?? '—');
+        document.getElementById('saveMetricMonitor').textContent = 'Save metric changes'; document.getElementById('cancelMetricEdit').hidden = false;
+        metricForm.scrollIntoView({block:'start',behavior:'smooth'}); document.getElementById('metricName').focus({preventScroll:true});
+      });
+      metricForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const fd = new FormData(metricForm), message = document.getElementById('metricMonitorStatus'), button = document.getElementById('saveMetricMonitor');
+        let min = Number(fd.get('min_value')), max = Number(fd.get('max_value'));
+        const none = fd.get('display') === 'none';
+        if (none && (!Number.isFinite(min) || !Number.isFinite(max) || max <= min)) { min = 0; max = 100; }
+        if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) { message.textContent = 'Maximum value must be greater than minimum value.'; return; }
+        const tags = Array.from(document.querySelectorAll('#tagBoxMetric input:checked'), input => input.value);
+        if (!tags.length) { message.textContent = 'Select at least one dashboard access tag.'; return; }
+        const kind = fd.get('kind');
+        const payload = {name:fd.get('name'),kind,display:fd.get('display'),min_value:min,max_value:max,unit:fd.get('unit'),interval_secs:Number(fd.get('interval_secs')),color:fd.get('color'),needle_color:fd.get('needle_color'),show_value:document.getElementById('metricShowValue').checked,decimals:Number(fd.get('decimals')),dashboard_tags:tags};
+        if (kind === 'ssh') { payload.ssh_server_id = Number(fd.get('ssh_server_id')); payload.command = fd.get('command'); } else payload.target = fd.get('target');
+        button.disabled = true; message.textContent = 'Saving metric…';
+        try {
+          const response = await fetch('/update/api/metric_monitors' + (editingMetricId ? '/' + editingMetricId : ''), {method:editingMetricId ? 'PUT' : 'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)});
+          const result = await response.json(); if (!response.ok) throw new Error(result.error || 'Could not save metric.');
+          resetMetricForm(); message.textContent = 'Metric saved. Its command runs at the configured interval.'; await refresh();
+        } catch(error) { message.textContent = error.message || 'Could not save metric. Please try again.'; }
+        finally { button.disabled = false; }
+      });
+      syncMetricSource();
+
+      document.getElementById('addMonitor').addEventListener('submit', async (ev)=>{
+        ev.preventDefault();
+        const fd = new FormData(ev.currentTarget);
+        try {
+          const box = document.getElementById('tagBoxMonitor');
+          const tags = Array.from(box ? box.querySelectorAll('input[type=checkbox]:checked') : []).map(i=>i.value);
+          await q('/update/api/add_status',{
+            method:'POST',
+            body:JSON.stringify({
+              kind:fd.get('kind'),
+              target:fd.get('target'),
+              server_name:fd.get('server_name'),
+              graph_type:fd.get('graph_type'),
+              graph_color:fd.get('graph_color'),
+              dashboard_tags: tags
+            }),
+            headers:{'content-type':'application/json'}
+          });
+          refresh();
+        } catch(e){ alert('error'); }
+      });
+
+      document.getElementById('addDev').addEventListener('submit', async (ev)=>{
+        ev.preventDefault(); const fd = new FormData(ev.currentTarget);
+        try {
+          const box = document.getElementById('tagBoxDev');
+          const tags = Array.from(box ? box.querySelectorAll('input[type=checkbox]:checked') : []).map(i=>i.value);
+          await q('/update/api/add_dev',{
+            method:'POST',
+            body:JSON.stringify({title:fd.get('title'),message:fd.get('message'),dashboard_tags: tags}),
+            headers:{'content-type':'application/json'}
+          });
+          refresh();
+        } catch(e){ alert('error'); }
+      });
+
+      document.getElementById('addIncident').addEventListener('submit', async (ev)=>{
+        ev.preventDefault(); const fd = new FormData(ev.currentTarget);
+        try {
+          const box = document.getElementById('tagBoxIncident');
+          const tags = Array.from(box ? box.querySelectorAll('input[type=checkbox]:checked') : []).map(i=>i.value);
+          await q('/update/api/add_incident',{
+            method:'POST',
+            body:JSON.stringify({tag:fd.get('tag'),title:fd.get('title'),message:fd.get('message'),dashboard_tags: tags}),
+            headers:{'content-type':'application/json'}
+          });
+          refresh();
+        } catch(e){ alert('error'); }
+      });
+
+      document.getElementById('addSSHServer').addEventListener('submit', async (ev)=>{
+        ev.preventDefault(); const fd = new FormData(ev.currentTarget);
+        try {
+          await q('/update/api/add_ssh_server',{
+            method:'POST',
+            body:JSON.stringify({
+              server_name:fd.get('server_name'),
+              ip_address:fd.get('ip_address'),
+              username:fd.get('username'),
+              password:fd.get('password'),
+              port:parseInt(fd.get('port')) || 22,
+              fetch_interval:parseInt(fd.get('fetch_interval')) || 300,
+              auto_fetch_enabled:fd.get('auto_fetch_enabled') === 'on'
+            }),
+            headers:{'content-type':'application/json'}
+          });
+          refresh();
+          ev.target.reset();
+        } catch(e){ alert('error adding SSH server'); }
+      });
+
+      document.getElementById('addSSHAlarm').addEventListener('submit', async (ev)=>{
+        ev.preventDefault(); const fd = new FormData(ev.currentTarget);
+        try {
+          const box = document.getElementById('tagBoxAlarm');
+          const tags = Array.from(box ? box.querySelectorAll('input[type=checkbox]:checked') : []).map(i=>i.value);
+          await q('/update/api/add_ssh_alarm',{
+            method:'POST',
+            body:JSON.stringify({
+              server_name:fd.get('server_name'),
+              severity:fd.get('severity'),
+              message:fd.get('message'),
+              details:fd.get('details'),
+              dashboard_tags: tags
+            }),
+            headers:{'content-type':'application/json'}
+          });
+          refresh();
+          ev.target.reset();
+        } catch(e){ alert('error adding alarm'); }
+      });
+
+      [['showActiveAlarms','active'],['showHistoryAlarms','history'],['showResolvedAlarms','resolved']].forEach(([id, view]) => {
+        document.getElementById(id).addEventListener('click', () => {
+          currentAlarmView = view;
+          [['showActiveAlarms','active'],['showHistoryAlarms','history'],['showResolvedAlarms','resolved']].forEach(([buttonId, buttonView]) => {
+            const button = document.getElementById(buttonId);
+            button.classList.toggle('secondary', buttonView !== view);
+            button.setAttribute('aria-pressed', String(buttonView === view));
+          });
+          refreshSSHAlarms();
+        });
+      });
+
+      document.getElementById('fetchAllAlarms').addEventListener('click', async ()=>{
+        if(!confirm('Fetch alarms from all SSH servers? This may take a moment.')) return;
+        try {
+          const result = await q('/update/api/fetch_all_ssh_alarms', {method:'POST'});
+          alert(`Fetched alarms from ${result.servers_checked} servers. Found ${result.new_alarms} new alarms.`);
+          refreshSSHAlarms();
+        } catch(e){ alert('Error fetching alarms'); }
+      });
+
+      document.getElementById('fetchEnabledAlarms').addEventListener('click', async ()=>{
+        if(!confirm('Fetch alarms from auto-enabled SSH servers only? This may take a moment.')) return;
+        try {
+          const result = await q('/update/api/fetch_enabled_ssh_alarms', {method:'POST'});
+          alert(`Fetched alarms from ${result.servers_checked} auto-enabled servers. Found ${result.new_alarms} new alarms.`);
+          refreshSSHAlarms();
+        } catch(e){ alert('Error fetching alarms'); }
+      });
+
+      async function delMon(id){ if(!confirm('delete?')) return; await fetch('/update/api/del_status/'+id,{method:'POST'}); refresh(); }
+      async function delDev(id){ if(!confirm('delete?')) return; await fetch('/update/api/del_dev/'+id,{method:'POST'}); refresh(); }
+      async function delInc(id){ if(!confirm('delete?')) return; await fetch('/update/api/del_inc/'+id,{method:'POST'}); refresh(); }
+      async function delRep(id){ if(!confirm('delete report?')) return; await fetch('/update/api/del_report/'+id,{method:'POST'}); refresh(); }
+      async function delSSHServer(id){ if(!confirm('delete SSH server?')) return; await fetch('/update/api/del_ssh_server/'+id,{method:'POST'}); refresh(); }
+      async function delSSHAlarm(id){ if(!confirm('delete alarm?')) return; await fetch('/update/api/del_ssh_alarm/'+id,{method:'POST'}); refreshSSHAlarms(); }
+      async function moveAlarmToHistory(id){
+        try { await q('/update/api/ssh_alarms/bulk', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action:'history',ids:[id]})}); await refreshSSHAlarms(); document.getElementById('alarmBulkStatus').textContent = 'Alarm moved to history.'; }
+        catch(error) { document.getElementById('alarmBulkStatus').textContent = 'Could not move alarm to history. Please try again.'; }
+      }
+      async function resolveAlarm(id){ if(!confirm('resolve alarm?')) return; await fetch('/update/api/resolve_ssh_alarm/'+id,{method:'POST'}); refreshSSHAlarms(); }
+      async function testSSHConnection(id){
+        try {
+          const result = await q('/update/api/test_ssh_connection/'+id, {method:'POST'});
+          alert(result.success ? 'SSH connection successful!' : 'SSH connection failed: ' + result.error);
+        } catch(e){ alert('Error testing connection'); }
+      }
+
+      async function testSSHAlarms(id){
+        try {
+          const result = await q('/update/api/test_ssh_alarms/'+id, {method:'POST'});
+          if(result.success) {
+            alert(`SSH alarm test successful! Found ${result.alarms_count} alarms. Check console for details.`);
+            refreshSSHAlarms();
+          } else {
+            alert('SSH alarm test failed: ' + result.error);
+          }
+        } catch(e){ alert('Error testing SSH alarms'); }
+      }
+
+      async function toggleAutoFetch(id, enable){
+        try {
+          const result = await q('/update/api/toggle_auto_fetch/'+id, {
+            method:'POST',
+            body:JSON.stringify({auto_fetch_enabled: enable}),
+            headers:{'content-type':'application/json'}
+          });
+          if(result.ok) {
+            refreshSSHServers();
+          } else {
+            alert('Error toggling auto-fetch');
+          }
+        } catch(e){ alert('Error toggling auto-fetch'); }
+      }
+
+      function genTagRow(k){
+        const expired = k.expires_at && new Date(k.expires_at) <= new Date();
+        const status = !k.is_active ? 'DISABLED' : (expired ? 'EXPIRED' : 'ACTIVE');
+        const statusColor = !k.is_active ? '#6b7280' : (expired ? '#ef4444' : '#16a34a');
+        const isDefault = k.tag === 'NASCM-Default';
+        const toggleLabel = k.is_active ? 'Disable' : 'Enable';
+        const toggleAction = k.is_active ? 'disableDashboardTag' : 'enableDashboardTag';
+        return `<div class="item row" style="align-items:center;">
+          <div style="flex:1">
+            <div><strong>${escapeHtml(k.tag)}</strong> <span class="small">${escapeHtml(k.key_value)}</span></div>
+            <div class="small">Created: ${new Date(k.created_at).toLocaleString()}${k.expires_at?` | Expires: ${new Date(k.expires_at).toLocaleString()}`:''} | <span style="color:${statusColor}">${status}</span></div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            ${isDefault ? `<button class="btn" onclick="refreshDefaultKey(${k.id})">Refresh Key</button>` : `<button class="btn" onclick="${toggleAction}(${k.id})">${toggleLabel}</button><button class="btn danger" onclick="deleteDashboardTag(${k.id})">Delete</button>`}
+          </div>
+          <div class="key-features" data-key-features="${k.id}"><strong class="small">Visible dashboard sections</strong><p class="small" style="margin:4px 0">Disabled sections are hidden and their data APIs are blocked for this key.</p><div class="feature-options">${Object.entries({monitors:'Monitors',messages:'Developer messages',incidents:'Incidents',alarms:'System alarms'}).map(([name,label]) => `<label><input type="checkbox" name="${name}" ${(k.features?.[name] !== false) ? 'checked' : ''}>${escapeHtml(label)}</label>`).join('')}</div><button type="button" class="btn secondary" data-save-features="${k.id}">Save features</button><span class="save-feedback" role="status"></span></div>
+        </div>`;
+      }
+      document.getElementById('dashboardTagsList').addEventListener('click', async event => {
+        const button = event.target.closest('[data-save-features]');
+        if (!button) return;
+        const group = button.closest('[data-key-features]');
+        const feedback = group.querySelector('[role="status"]');
+        const features = Object.fromEntries(Array.from(group.querySelectorAll('input[type=checkbox]'), input => [input.name, input.checked]));
+        button.disabled = true; feedback.textContent = 'Saving…';
+        try {
+          await q(`/update/api/dashboard_keys/${button.dataset.saveFeatures}/features`, {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({features})});
+          feedback.textContent = 'Features saved.';
+        } catch(error) { feedback.textContent = 'Could not save. Please try again.'; }
+        finally { button.disabled = false; }
+      });
+
+      async function refreshDashboardTags(){
+        try{
+          const keys = await q('/update/api/dashboard_keys');
+          dashboardKeys = keys;
+          const now = Date.now();
+          window.enabledTagNames = new Set();
+          window.disabledTagNames = new Set();
+          keys.forEach(k=>{
+            const expired = k.expires_at ? (new Date(k.expires_at).getTime() <= now) : false;
+            if(k.is_active && !expired){
+              window.enabledTagNames.add(k.tag);
+            } else {
+              window.disabledTagNames.add(k.tag);
+            }
+          });
+          document.getElementById('dashboardTagsList').innerHTML = keys.map(genTagRow).join('');
+        }catch(e){ console.error('tags load', e); }
+      }
+
+      async function createDashboardTag(tag, expiry){
+        const body = { tag };
+        const map = { unlim:null, unlimited:null, '10m':600, '30m':1800, '1d':86400, '30d':2592000 };
+        const sec = map[expiry] ?? null;
+        if(sec !== null) body.expiry_seconds = sec;
+        const res = await q('/update/api/dashboard_keys', { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(body) });
+        return res;
+      }
+
+      document.getElementById('addDashboardTag').addEventListener('submit', async (ev)=>{
+        ev.preventDefault();
+        const fd = new FormData(ev.currentTarget);
+        try{
+          await createDashboardTag(fd.get('tag'), fd.get('expiry'));
+          ev.target.reset();
+          await refreshDashboardTags();
+          alert('Tag created');
+        }catch(e){ alert('Error creating tag'); }
+      });
+
+      async function disableDashboardTag(id){
+        try{ await fetch('/update/api/dashboard_keys/'+id+'/disable', {method:'POST'}); await refreshDashboardTags(); }
+        catch(e){ alert('Error disabling tag'); }
+      }
+
+      async function deleteDashboardTag(id){
+        if(!confirm('Delete this tag?')) return;
+        try{ await fetch('/update/api/dashboard_keys/'+id, {method:'DELETE'}); await refreshDashboardTags(); }
+        catch(e){ alert('Error deleting tag'); }
+      }
+
+      async function enableDashboardTag(id){
+        try{ await fetch('/update/api/dashboard_keys/'+id+'/enable', {method:'POST'}); await refreshDashboardTags(); }
+        catch(e){ alert('Error enabling tag'); }
+      }
+
+      async function refreshDefaultKey(id){
+        const msg = 'Are you sure you want to refresh the NASCM-Default key?\n\n' +
+                    'WARNING: This will immediately invalidate the current default access key.\n' +
+                    'Anyone using the old key will lose dashboard access until they use the new key.';
+        if(!confirm(msg)) return;
+        alert('Please keep the key with you else you will permanently lost the access to the dashboard using default key');
+        try{
+          const res = await q('/update/api/dashboard_keys/'+id+'/refresh', {method:'POST'});
+          if(res && res.key_value){
+            alert('Default key refreshed. New key:\n\n' + res.key_value + '\n\nCopy and store it securely.');
+          }
+          await refreshDashboardTags();
+        }catch(e){ alert('Error refreshing default key'); }
+      }
+
+      refresh();
+    </script>
+  {% endif %}
+</div>
+</body></html>

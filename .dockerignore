@@ -1,0 +1,6 @@
+# Only the Flask runtime is included in the image.
+**
+!main.py
+!requirements.txt
+!templates/
+!templates/**

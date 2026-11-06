@@ -1,0 +1,18 @@
+services:
+  status-dashboard:
+    build: .
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - status-data:/app/data
+    environment:
+      DATABASE_URL: sqlite:////app/data/status_dash.sqlite
+      UPDATE_KEY: ${UPDATE_KEY:?Set UPDATE_KEY in .env}
+      DASHBOARD_PIN: ${DASHBOARD_PIN:?Set DASHBOARD_PIN in .env}
+      FLASK_SECRET: ${FLASK_SECRET:?Set FLASK_SECRET in .env}
+      STATUS_SAMPLE_SECS: ${STATUS_SAMPLE_SECS:-10}
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+volumes:
+  status-data:
